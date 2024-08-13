@@ -38,6 +38,7 @@ async function loadAuctionDetails() {
         document.getElementById('currentBid').innerText = ethers.utils.formatEther(highestBid) + ' ETH';
         document.getElementById('highestBidder').innerText = highestBidder;
         document.getElementById('nftHash').innerText = generationHash;
+        document.getElementById('nftShares').innerText = ethers.utils.formatEther(highestBid) + ' ETH';
     } catch (error) {
         console.error('Error loading auction details:', error);
     }
@@ -118,9 +119,52 @@ async function redeemNFT() {
     }
 }
 
+// Set a new minter
+async function setMinter() {
+    const newMinter = prompt("Enter the address of the new minter:");
+    if (!newMinter) return;
+
+    try {
+        const tx = await contract.setMinter(newMinter);
+        await tx.wait();
+        alert(`Minter set to ${newMinter}`);
+    } catch (error) {
+        console.error('Setting minter failed:', error);
+    }
+}
+
+// Lock minting permanently
+async function lockMinting() {
+    if (!confirm("Are you sure you want to permanently lock minting?")) return;
+
+    try {
+        const tx = await contract.lockMint();
+        await tx.wait();
+        alert("Minting has been permanently locked.");
+    } catch (error) {
+        console.error('Locking minting failed:', error);
+    }
+}
+
+// Lock the base URI permanently
+async function lockBaseURI() {
+    if (!confirm("Are you sure you want to permanently lock the base URI?")) return;
+
+    try {
+        const tx = await contract.lockBaseURI();
+        await tx.wait();
+        alert("Base URI has been permanently locked.");
+    } catch (error) {
+        console.error('Locking base URI failed:', error);
+    }
+}
+
 // Event listeners
 document.getElementById('connectWalletButton').addEventListener('click', connectWallet);
 document.getElementById('placeBidButton').addEventListener('click', placeBid);
 document.getElementById('finalizeAuctionButton').addEventListener('click', finalizeAuction);
 document.getElementById('mintButton').addEventListener('click', mintNFT);
 document.getElementById('redeemButton').addEventListener('click', redeemNFT);
+document.getElementById('setMinterButton').addEventListener('click', setMinter);
+document.getElementById('lockMintingButton').addEventListener('click', lockMinting);
+document.getElementById('lockBaseURIButton').addEventListener('click', lockBaseURI);
